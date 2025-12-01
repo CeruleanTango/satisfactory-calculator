@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: satisfactory_db
+    environment:
+      POSTGRES_DB: satisfactory
+      POSTGRES_USER: factory_user
+      POSTGRES_PASSWORD: factory_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./seed_data:/docker-entrypoint-initdb.d/seed_data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U factory_user -d satisfactory"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+
