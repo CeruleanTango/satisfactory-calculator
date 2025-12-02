@@ -103,6 +103,20 @@ INSERT INTO recipe_ingredients (recipe_id, item_id, quantity)
 VALUES (10, 7, 5), (10, 11, 25);
 
 INSERT INTO recipes (name, building_id, output_item_id, output_rate, crafting_time)
-VALUES ('Modular Frame' 3, 14, 2, 60);
+SELECT 'Modular Frame', b.id, i.id, 2, 60
+FROM buildings b, items i
+WHERE b.name = 'Assembler' AND i.name = 'Modular Frame'
+ON CONFLICT (name) DO NOTHING;
+
 INSERT INTO recipe_ingredients (recipe_id, item_id, quantity)
-VALUES (11, 12, 3), (11, 7, 12);
+SELECT r.id, i.id, 3
+FROM recipes r, items i
+WHERE r.name = 'Modular Frame' AND i.name = 'Reinforced Iron Plate'
+ON CONFLICT (recipe_id, item_id) DO NOTHING;
+
+INSERT INTO recipe_ingredients (recipe_id, item_id, quantity)
+SELECT r.id, i.id, 12
+FROM recipes r, items i
+WHERE r.name = 'Modular Frame' AND i.name = 'Iron Rod'
+ON CONFLICT (recipe_id, item_id) DO NOTHING;
+
