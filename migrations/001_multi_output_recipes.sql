@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS recipe_outputs (
 INSERT INTO recipe_outputs (recipe_id, item_id, quantity, is_primary)
 SELECT
     r.id,
-    r.ouput_item_id,
+    r.output_item_id,
     (r.output_rate * r.crafting_time) / 60,
     TRUE
 FROM recipes r
