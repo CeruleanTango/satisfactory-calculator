@@ -27,7 +27,7 @@ DECLARE
     output_count INTEGER;
 BEGIN
     SELECT COUNT(*) INTO recipe_count FROM recipes;
-    SELECT COUNT(*) INTO output_count FROM recipe_outputs WHERE is_primary = TRUE
+    SELECT COUNT(*) INTO output_count FROM recipe_outputs WHERE is_primary = TRUE;
 
     IF recipe_count != output_count THEN
         RAISE EXCEPTION 'Migration verification failed: recipe count (%) != output count (%)',
