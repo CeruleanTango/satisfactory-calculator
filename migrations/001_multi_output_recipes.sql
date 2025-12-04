@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS recipe_outputs (
     UNIQUE(recipe_id, item_id)
 );
 
-INSERT INTO recipes_outputs (recipe_id, item_id, quantity, is_primary)
+INSERT INTO recipe_outputs (recipe_id, item_id, quantity, is_primary)
 SELECT
     r.id,
     r.ouput_item_id,
