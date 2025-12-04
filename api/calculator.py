@@ -95,7 +95,9 @@ class ProductionCalculator:
             })
 
             for ingredient in recipe["ingredients"]:
-                ingredient_rate = (ingredient["quantity"] * rate) / recipe["output_rate"]
+                output_per_craft = recipe["output_rate"] / (60 / recipe["crafting_time"])
+                crafts_per_minute = rate / ouput_per_craft
+                ingredient_rate = crafts_per_minute * ingredient["quantity"]
                 calculate_recursive(ingredient["item"], ingredient_rate, depth + 1)
 
         calculate_recursive(item_name, target_rate)
