@@ -31,7 +31,7 @@ BEGIN
 
     IF recipe_count != output_count THEN
         RAISE EXCEPTION 'Migration verification failed: recipe count (%) != output count (%)',
-            recipe_count, output_count
+            recipe_count, output_count;
     END IF;
 
     RAISE NOTICE 'Migration verification passed: % recipes = % outputs',
@@ -41,4 +41,4 @@ END $$;
 
 COMMIT;
 
-SELECT 'Migration 001_multi_output_recipes completed!'
+SELECT 'Migration 001_multi_output_recipes completed!' as status;
