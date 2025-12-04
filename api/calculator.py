@@ -1,0 +1,115 @@
+from sqlalchemy import text
+from typing import Dict, List
+
+class ProductionCalculator:
+    def __init__(self, engine):
+        self.engine = engine
+
+    def get_recipe_for_item(self, item_name: str) -> Dict:
+        """Get the recipe that produces the specified item"""
+        with self.engine.connect() as conn:
+            result = conn.execute(text("""
+                SELECT r.id, r.name, r.output_rate, r.crafting_time, b.name, b.power_consumption, i.name as output_item
+                FROM recipes r
+                JOIN items i on r.output_item_id = i.id
+                JOIN buildings b on r.building_id = b.id
+                WHERE i.name = :item_name AND r.is_alternate = FALSE
+                LIMIT 1
+            """), {"item_name": item_name})
+
+            row = result.fetchone()
+            if not row:
+                raise ValueError(f"No recipe found for item: {item_name}")
+
+            recipe_id = row[0]
+
+            # Get ingredients
+            ingredients_result = conn.execute(text("""
+                SELECT i.name, ri.quantity
+                FROM recipe_ingredients ri
+                JOIN items i ON ri.item_id = i.id
+                WHERE ri.recipe_id = :recipe_id
+            """), {"recipe_id": recipe_id})
+
+            ingredients = [{"item": r[0], "quantity": float(r[1])} for r in ingredients_result]
+
+            return {
+                "recipe_name": row[1],
+                "output_rate": float(row[2]),
+                "crafting_time": float(row[3]),
+                "building": row[4],
+                "power_consumption": float(row[5]),
+                "output_item": row[6],
+                "ingredients": ingredients
+            }
+
+    def is_raw_material(self, item_name: str) -> bool:
+        """Check if an item is a raw material"""
+        with self.engine.connect() as conn:
+            result = conn.execute(text("""
+                SELECT category FROM items WHERE name = :item_name
+            """), {"item_name": item_name})
+            row = result.fetchone()
+            return row and row[0] == 'raw'
+
+    def calculate_requirements(self, item_name: str, target_rate: float):
+        """
+        Calculate all requirements for producing an item at a target rate
+        Returns a breakdown of buildings needed and raw materials required for the specified item
+        """
+        production_chain = []
+        raw_materials = {}
+        total_power = 0
+        building_summary = {}
+
+        def calculate_recursive(item: str, rate: float, depth: int = 0):
+            nonlocal total_power
+        
+            if self.is_raw_material(item):
+                raw_materials[item] = raw_materials.get(item, 0) + rate
+                return
+
+            recipe = self.get_recipe_for_item(item)
+        
+            buildings_needed = rate / recipe["output_rate"]
+            power_for_this_step = buildings_needed * recipe["power_consumption"]
+            total_power += power_for_this_step
+
+            building_name = recipe["building"]
+            if building_name not in building_summary:
+                building_summary[building_name] = {
+                    "count": 0,
+                    "power": 0
+                }
+            building_summary[building_name]["count"] += buildings_needed
+            building_summary[building_name]["power"] += power_for_this_step
+
+            production_chain.append({
+                "depth": depth,
+                "item": item,
+                "target_rate": round(rate, 2),
+                "recipe": recipe["recipe_name"],
+                "building": recipe["building"],
+                "buildings_needed": round(buildings_needed, 2),
+                "power_required": round(power_for_this_step, 2)
+            })
+
+            for ingredient in recipe["ingredients"]:
+                ingredient_rate = (ingredient["quantity"] * rate) / recipe["output_rate"]
+                calculate_recursive(ingredient["item"], ingredient_rate, depth + 1)
+
+        calculate_recursive(item_name, target_rate)
+
+        for building in building_summary:
+            building_summary[building]["count"] = round(building_summary[building]["count"], 2)
+            building_summary[building]["power"] = round(building_summary[building]["power"], 2)
+
+        return {
+            "target_item": item_name,
+            "target_rate": target_rate,
+            "production_chain": production_chain,
+            "raw_materials_per_minute": {k: round(v, 2) for k,v in raw_materials.items()},
+            "building_summary": building_summary,
+            "total_power_consumption": round(total_power, 2),
+            "total_buildings": round(sum(step["buildings_needed"] for step in production_chain), 2)
+        }
