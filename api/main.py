@@ -61,9 +61,9 @@ def list_recipes():
           SELECT r.name, r.crafting_time, b.name as building,
               STRING_AGG(DISTINCT i.name, ', ') as outputs
           FROM recipes r
+          JOIN recipe_outputs ro ON r.id = ro.recipe_id
           JOIN items i ON ro.item_id = i.id
           JOIN buildings b ON r.building_id = b.id
-          JOIN recipe_outputs ro ON r.id = ro.recipe_id
           GROUP BY r.id, r.name, r.crafting_time, b.name
           ORDER BY r.name
         """))
