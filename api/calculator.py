@@ -110,7 +110,7 @@ class ProductionCalculator:
             building_summary[building_name]["count"] += buildings_needed
             building_summary[building_name]["power"] += power_for_this_step
 
-            production_chain.append({
+            chain_entry = {
                 "depth": depth,
                 "item": item,
                 "target_rate": round(rate, 2),
@@ -118,18 +118,20 @@ class ProductionCalculator:
                 "building": recipe["building"],
                 "buildings_needed": round(buildings_needed, 2),
                 "power_required": round(power_for_this_step, 2)
-            })
+            }
 
             byproducts = [output for output in recipe["outputs"] if not output["is_primary"]]
 
             if byproducts:
-                production_chain[-1][byproducts] = [
+                chain_entry[byproducts] = [
                     {
                         "item": bp["item"],
                         "rate": round(bp["rate"] * buildings_needed, 2)
                     }
                     for bp in byproducts
                 ]
+
+            production_chain.append(chain_entry)
 
             for ingredient in recipe["ingredients"]:
                 output_per_craft = recipe["output_rate"] / (60 / recipe["crafting_time"])
