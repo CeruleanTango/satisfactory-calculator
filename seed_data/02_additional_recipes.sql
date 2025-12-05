@@ -270,3 +270,24 @@ SELECT r.id, i.id, 12
 FROM recipes r, items i
 WHERE r.name = 'Versatile Framework' AND i.name = 'Steel Beam'
 ON CONFLICT (recipe_id, item_id) DO NOTHING;
+
+-- Black Powder
+INSERT INTO items (name, category)
+VALUES ('Black Powder', 'intermediate')
+INSERT INTO recipes (name, building_id, output_item_id, output_rate, crafting_time)
+SELECT 'Black Powder', b.id, i.id, 30, 4
+FROM buildings b, item id
+WHERE b.name = 'Assembler' AND i.name = 'Black Powder'
+ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO recipe_ingredients (recipe_id, item_id, quantity)
+SELECT r.id, i.id, 1
+FROM recipes r, items i
+WHERE r.name = 'Black Powder' AND i.name = 'Coal'
+ON CONFLICT (recipe_id, item_id) DO NOTHING
+
+INSERT INTO recipe_ingredients (recipe_id, item_id, quantity)
+SELECT r.id, i.id, 1
+FROM recipes r, items i
+WHERE r.name = 'Black Powder' AND i.name = 'Sulfur'
+ON CONFLICT (recipe_id, item_id) DO NOTHING
