@@ -54,7 +54,7 @@ class ProductionCalculator:
                 JOIN items i ON ri.item_id = i.id
                 WHERE ri.recipe_id = :recipe_id
                 ORDER BY i.name
-            """)), {"recipe_id": recipe_id}
+            """), {"recipe_id": recipe_id})
 
             ingredients = [{"item": r[0], "quantity": float(r[1])} for r in ingredients_result]
 
