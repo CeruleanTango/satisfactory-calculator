@@ -123,7 +123,7 @@ class ProductionCalculator:
             byproducts = [output for output in recipe["outputs"] if not output["is_primary"]]
 
             if byproducts:
-                chain_entry[byproducts] = [
+                chain_entry["byproducts"] = [
                     {
                         "item": bp["item"],
                         "rate": round(bp["rate"] * buildings_needed, 2)
