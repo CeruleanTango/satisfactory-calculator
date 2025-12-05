@@ -61,10 +61,10 @@ insert into recipe_outputs(recipe_id, item_id, quantity, is_primary)
 select r.id, i.id, 2, TRUE
 from recipes r, items i
 where r.name = 'Rubber' and i.name = 'Rubber'
-on conflict (recipe_id, name_id) do nothing;
+on conflict (recipe_id, item_id) do nothing;
 
 insert into recipe_outputs(recipe_id, item_id, quantity, is_primary)
 select r.id, i.id, 2, FALSE
 from recipes r, items i
 where r.name = 'Rubber' and i.name = 'Heavy Oil Residue'
-on conflict (recipe_id, name_id) do nothing;
+on conflict (recipe_id, item_id) do nothing;
