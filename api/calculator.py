@@ -12,7 +12,7 @@ class ProductionCalculator:
                 SELECT r.id, r.name, r.crafting_time, b.name, b.power_consumption, ro.quantity as output_quantity, i.name as output_item
                 FROM recipes r
                 JOIN recipe_outputs ro ON r.id = ro.recipe_id
-                JOIN items i on r.output_item_id = i.id
+                JOIN items i on ro.item_id = i.id
                 JOIN buildings b on r.building_id = b.id
                 WHERE i.name = :item_name AND r.is_alternate = FALSE
                   AND ro.is_primary = TRUE
