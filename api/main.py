@@ -58,18 +58,21 @@ def list_recipes():
     """List all recipes"""
     with engine.connect() as conn:
         result = conn.execute(text("""
-          SELECT r.name, i.name, as output, r.output_rate, b.name as building
+          SELECT r.name, r.crafting_time, b.name as building,
+              STRING_AGG(DISTINCT i.name, ', ') as outputs
           FROM recipes r
-          JOIN items i ON r.output_item_id = i.id
+          JOIN items i ON ro.item_id = i.id
           JOIN buildings b ON r.building_id = b.id
+          JOIN recipe_outputs ro ON r.id = ro.recipe_id
+          GROUP BY r.id, r.name, r.crafting_time, b.name
           ORDER BY r.name
         """))
         recipes = [
             {
                 "name": row[0],
-                "output": row[1],
-                "rate": float(row[2]),
-                "building": row[3]
+                "outputs": row[3],
+                "crafting_time": float(row[1]),
+                "building": row[2]
             } for row in result
         ]
     return {"count": len(recipes), "recipes": recipes}

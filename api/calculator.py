@@ -9,11 +9,13 @@ class ProductionCalculator:
         """Get the recipe that produces the specified item"""
         with self.engine.connect() as conn:
             result = conn.execute(text("""
-                SELECT r.id, r.name, r.output_rate, r.crafting_time, b.name, b.power_consumption, i.name as output_item
+                SELECT r.id, r.name, r.crafting_time, b.name, b.power_consumption, ro.quantity as output_quantity, i.name as output_item
                 FROM recipes r
+                JOIN recipe_outputs ro ON r.id = ro.recipe_id
                 JOIN items i on r.output_item_id = i.id
                 JOIN buildings b on r.building_id = b.id
                 WHERE i.name = :item_name AND r.is_alternate = FALSE
+                  AND ro.is_primary = TRUE
                 LIMIT 1
             """), {"item_name": item_name})
 
@@ -22,24 +24,48 @@ class ProductionCalculator:
                 raise ValueError(f"No recipe found for item: {item_name}")
 
             recipe_id = row[0]
+            recipe_name = row[1]
+            crafting_time = float(row[2])
+            building = row[3]
+            power_consumption = float(row[4])
+            output_quantity = float(row[5])
+
+            output_rate = (output_quantity * 60) / crafting_time
 
             # Get ingredients
+            outputs_result = conn.execute(text("""
+                SELECT i.name, ro.quantity, ro.is_primary
+                FROM recipe_outputs ro
+                JOIN items i ON ro.item_id = i.id
+                WHERE ro.recipe_id = :recipe_id
+                ORDER BY ro.is_primary DESC, i.name
+            """), {"recipe_id": recipe_id})
+
+            outputs = [{
+                "item": r[0], 
+                "quantity": float(r[1]),
+                "rate": (float(r[1]) * 60) / crafting_time,
+                "is_primary": r[2]
+            } for r in outputs_result]
+
             ingredients_result = conn.execute(text("""
                 SELECT i.name, ri.quantity
                 FROM recipe_ingredients ri
                 JOIN items i ON ri.item_id = i.id
                 WHERE ri.recipe_id = :recipe_id
-            """), {"recipe_id": recipe_id})
+                ORDER BY i.name
+            """)), {"recipe_id": recipe_id}
 
             ingredients = [{"item": r[0], "quantity": float(r[1])} for r in ingredients_result]
 
             return {
-                "recipe_name": row[1],
-                "output_rate": float(row[2]),
-                "crafting_time": float(row[3]),
-                "building": row[4],
-                "power_consumption": float(row[5]),
-                "output_item": row[6],
+                "recipe_name": recipe_name,
+                "output_rate": output_rate,
+                "output_quantity": output_quantity,
+                "crafting_time": crafting_time,
+                "building": building,
+                "power_consumption": power_consumption,
+                "outputs": outputs,
                 "ingredients": ingredients
             }
 
@@ -93,6 +119,17 @@ class ProductionCalculator:
                 "buildings_needed": round(buildings_needed, 2),
                 "power_required": round(power_for_this_step, 2)
             })
+
+            byproducts = [output for output in recipe["outputs"] if not output["is_primary"]]
+
+            if byproducts:
+                production_chain[-1][byproducts] = [
+                    {
+                        "item": bp["item"],
+                        "rate": round(bp["rate"] * buildings_needed, 2)
+                    }
+                    for bp in byproducts
+                ]
 
             for ingredient in recipe["ingredients"]:
                 output_per_craft = recipe["output_rate"] / (60 / recipe["crafting_time"])
