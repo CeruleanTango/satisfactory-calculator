@@ -25,7 +25,7 @@ class RecipeBuilder:
         while True:
             try:
                 self.crafting_time = float(input("Power consumption of building: ").strip())
-                if self.crafing_time <= 0:
+                if self.crafting_time <= 0:
                     print("Power consumption must be a positive number")
                     continue
                 break
@@ -35,7 +35,7 @@ class RecipeBuilder:
         while True:
             try:
                 self.crafting_time = float(input("Crafting time (seconds): ").strip())
-                if self.crafing_time <= 0:
+                if self.crafting_time <= 0:
                     print("Crafting time must be a positive number")
                     continue
                 break
@@ -66,7 +66,7 @@ class RecipeBuilder:
             is_primary = input("Is this the primary output? (y/n): ").strip()
             output['is_primary'] = is_primary == 'y'
 
-            rate_per_min = output(['quantity'] * 60 / self.crafing_time)
+            rate_per_min = output(['quantity'] * 60 / self.crafting_time)
             print(f" -> This produces {rate_per_min:.2f} {output['item']} per minute")
 
             self.outputs.append(output)
@@ -117,7 +117,7 @@ class RecipeBuilder:
             print("-"*15)
             print(f"Name: {self.recipe_name}")
             print(f"Building: {self.building}")
-            print(f"Crafting Time: {self.crafing_time}s")
+            print(f"Crafting Time: {self.crafting_time}s")
             print(f"Alternate: {'Yes' if self.is_alternate else 'No'}")
 
             print("\nOutputs:")
