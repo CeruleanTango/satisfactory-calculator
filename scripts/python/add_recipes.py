@@ -221,14 +221,14 @@ def main():
         print("-4- Cancel")
 
         choice = input("\n(1-4): ").strip()
-        input_check = FALSE
+        input_check = False
 
         if(choice == '1' or choice == '3'):
             print("\n" + "-"*30)
             print("Generated SQL...")
             print("\n" + "-"*30)
             print(sql)
-            input_check = TRUE
+            input_check = True
         
         if(choice == '2' or choice == '3'):
             print("\n"+"-"*30)
@@ -236,7 +236,7 @@ def main():
             with open(filename, 'w') as f:
                 f.write(sql)
             print(f"Saved to {filename}")
-            input_check = TRUE
+            input_check = True
 
         if choice == '4':
             print("Operation cancelled.")
