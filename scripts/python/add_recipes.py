@@ -187,7 +187,7 @@ class RecipeBuilder:
         # Add ingredients
         if self.ingredients:
             sql_parts.append("-- Add recipe ingredients")
-            for ingredient in ingredients:
+            for ingredient in self.ingredients:
                 sql_parts.append("INSERT INTO recipe_ingredients (recipe_id, item_id, quantity)")
                 sql_parts.append(f"SELECT r.id, i.id, {ingredient['quantity']}")
                 sql_parts.append("FROM recipes r, items i")
