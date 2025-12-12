@@ -179,7 +179,8 @@ class RecipeBuilder:
             for output in self.outputs:
                 sql_parts.append("INSERT INTO recipe_outputs (recipe_id, item_id, quantity, is_primary)")
                 sql_parts.append(f"SELECT r.id, i.id, {output['quantity']}, {'TRUE' if output['is_primary'] else 'FALSE'}")
-                sql_parts.append("FROM recipes r, items i")                 sql_parts.append(f"WHERE r.name = '{self.recipe_name}'")
+                sql_parts.append("FROM recipes r, items i")                 
+                sql_parts.append(f"WHERE r.name = '{self.recipe_name}'")
                 sql_parts.append("ON CONFLICT (recipe_id, item_id) DO NOTHING;")
                 sql_parts.append("")
 
@@ -190,7 +191,7 @@ class RecipeBuilder:
                 sql_parts.append("INSERT INTO recipe_ingredients (recipe_id, item_id, quantity)")
                 sql_parts.append(f"SELECT r.id, i.id, {ingredient['quantity']}")
                 sql_parts.append("FROM recipes r, items i")
-		ingredient_name = ingredient['item']
+		        ingredient_name = ingredient['item']
                 sql_parts.append(f"WHERE r.id = '{self.recipe_name}' AND i.name = '{ingredient_name}'")
                 sql_parts.append("ON CONFLICT (recipe_id, item_id) DO NOTHING;")
                 sql_parts.append("")
