@@ -123,7 +123,7 @@ class RecipeBuilder:
         print("\nOutputs:")
         for output in self.outputs:
             rate = (output['quantity'] * 60) / self.crafting_time
-            primary = " (PRIMARY)" if output['is_primary'] else " (byproduc)"
+            primary = " (PRIMARY)" if output['is_primary'] else " (byproduct)"
             print(f" - {output['quantity']} {output['item']} per craft = {rate:.2f}/min{primary}")
 
         print("\nIngredients:")
@@ -167,7 +167,7 @@ class RecipeBuilder:
         # Add recipe
         sql_parts.append("-- Add recipe")
         sql_parts.append("INSERT INTO recipes (name, building_id, crafting_time, is_alternate)")
-        sql_parts.append(f"SELECT '{self.recipe_name}', b.id, {self.crafting}, {self.is_alternate}")
+        sql_parts.append(f"SELECT '{self.recipe_name}', b.id, {self.crafting_time}, {self.is_alternate}")
         sql_parts.append("FROM buildings b")
         sql_parts.append(f"WHERE b.name = '{self.building}'")
         sql_parts.append("ON CONFLICT (name) DO NOTHING;")
