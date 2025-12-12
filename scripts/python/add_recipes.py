@@ -24,8 +24,8 @@ class RecipeBuilder:
         
         while True:
             try:
-                self.crafting_time = float(input("Power consumption of building (MW): ").strip())
-                if self.crafting_time <= 0:
+                self.building_power = float(input("Power consumption of building (MW): ").strip())
+                if self.building_power <= 0:
                     print("Power consumption must be a positive number")
                     continue
                 break
