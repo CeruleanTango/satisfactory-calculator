@@ -210,7 +210,7 @@ def main():
         builder.prompt_outputs()
         builder.prompt_ingredients()
 
-        building.display_summary()
+        builder.display_summary()
 
         sql = builder.generate_sql()
 
