@@ -139,7 +139,7 @@ class RecipeBuilder:
 
         sql_parts.append(f"-- Recipe: {self.recipe_name}")
         sql_parts.append(f"-- Building: {self.building}")
-        sql_parts.append(f"-- Crafting Time: {self.crafint_time}s")
+        sql_parts.append(f"-- Crafting Time: {self.crafting_time}s")
         sql_parts.append("")
 
         all_items = set()
