@@ -61,7 +61,7 @@ function ItemList() {
           className={filter === 'intermediate' ? 'active' : ''}
           onClick={() => setFilter('intermediate')}
         >
-          Intermediate ({items.filter( i => i.category === 'intermediate').length})
+          Intermediate ({items.filter(i => i.category === 'intermediate').length})
         </button>
       </div>
 

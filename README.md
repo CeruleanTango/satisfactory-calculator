@@ -20,6 +20,7 @@ Practical learning experience for:
 - **Database** PostgreSQL 15
 - **Containerization** Docker, Docker Compose
 - **Infrastructure** Terraform
+- **Frontend** React.js
 
 ## Prerequisites ##
 - Docker Desktop (Windows)
@@ -37,6 +38,7 @@ Practical learning experience for:
 - [ ] Support for alternate recipes
 - [ ] Web frontend interface
 - [ ] Terraform deployment
+- [ ] Saveable production chains that offer uses for byproducts
 
 ## License ##
 see LICENSE file for details
