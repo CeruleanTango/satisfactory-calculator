@@ -192,7 +192,7 @@ class RecipeBuilder:
                 sql_parts.append(f"SELECT r.id, i.id, {ingredient['quantity']}")
                 sql_parts.append("FROM recipes r, items i")
                 ingredient_name = ingredient['item']
-                sql_parts.append(f"WHERE r.id = '{self.recipe_name}' AND i.name = '{ingredient_name}'")
+                sql_parts.append(f"WHERE r.name = '{self.recipe_name}' AND i.name = '{ingredient_name}'")
                 sql_parts.append("ON CONFLICT (recipe_id, item_id) DO NOTHING;")
                 sql_parts.append("")
 
