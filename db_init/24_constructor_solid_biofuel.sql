@@ -31,5 +31,5 @@ ON CONFLICT (recipe_id, item_id) DO NOTHING;
 INSERT INTO recipe_ingredients (recipe_id, item_id, quantity)
 SELECT r.id, i.id, 8.0
 FROM recipes r, items i
-WHERE r.id = 'Solid Biofuel' AND i.name = 'Biomass'
+WHERE r.name = 'Solid Biofuel' AND i.name = 'Biomass'
 ON CONFLICT (recipe_id, item_id) DO NOTHING;

@@ -31,5 +31,5 @@ ON CONFLICT (recipe_id, item_id) DO NOTHING;
 INSERT INTO recipe_ingredients (recipe_id, item_id, quantity)
 SELECT r.id, i.id, 4.0
 FROM recipes r, items i
-WHERE r.id = 'Steel Beam' AND i.name = 'Steel Ingot'
+WHERE r.name = 'Steel Beam' AND i.name = 'Steel Ingot'
 ON CONFLICT (recipe_id, item_id) DO NOTHING;
