@@ -8,10 +8,7 @@ services:
       POSTGRES_PASSWORD: factory_pass
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./seed_data:/docker-entrypoint-initdb.d/seed_data
-      - ./seed_data/smelter_recipes:/docker-entrypoint-initdb.d/seed_data/smelter_recipes
-      - ./seed_data/constructor_recipes:/docker-entrypoint-initdb.d/seed_data/constructor_recipes
+      - ./db_init:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     restart: unless-stopped
